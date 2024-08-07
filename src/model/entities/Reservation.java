@@ -42,9 +42,17 @@ public class Reservation {
         return (int) ChronoUnit.DAYS.between(checkIn,checkOut);// esse metado e para data local sem hr, min e seg
     }
      // vai muda
-    public  void updateDates(LocalDate checkIn, LocalDate checkOut){
+    public  String updateDates(LocalDate checkIn, LocalDate checkOut){
+        LocalDate now = LocalDate.now();
+        if (checkIn.isBefore(now) || checkOut.isBefore(now)) {// ser a data de check-in for antes de agora ou a data de check-out for antes de agora q dizer q eu nao posso aceita as datas
+            return "Reservation dates for update must be future dates";
+        }
+        if (!checkOut.isAfter(checkIn)){
+           return "Check-out date must be after check-in date";
+        }
         this.checkIn=checkIn;
         this.checkOut=checkOut;
+        return null;
     }
 
     @Override

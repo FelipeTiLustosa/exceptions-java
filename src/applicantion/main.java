@@ -20,8 +20,13 @@ inválidos para a reserva, conforme as seguintes regras:
 - Alterações de reserva só podem ocorrer para datas futuras
 - A data de saída deve ser maior que a data de entrada
 */
-        //• Solução 1 (muito ruim): lógica de validação no programa principal
-        //• Lógica de validação não delegada à reserva
+        /*• Solução 2 (ruim): método retornando string • A semântica da operação é prejudicada
+           • Retornar string não tem nada a ver com atualização de reserva
+           • E se a operação tivesse que retornar um string?
+            • Ainda não é possível tratar exceções em construtores
+            • Ainda não há auxílio do compilador: o programador deve "lembrar" de verificar se houve erro
+            • A lógica fica estruturada em condicionais aninhadas*/
+
         Scanner sc = new Scanner(System.in);
         DateTimeFormatter ft = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -48,15 +53,11 @@ inválidos para a reserva, conforme as seguintes regras:
             System.out.print("Check-in date (dd/MM/yyyy): ");
             checkOut = LocalDate.parse(sc.next(), ft);
 
-            LocalDate now = LocalDate.now();
-            if (checkIn.isBefore(now) || checkOut.isBefore(now)) {// ser a data de check-in for antes de agora ou a data de check-out for antes de agora q dizer q eu nao posso aceita as datas
-                System.out.println("Error in reservation: Reservation dates for update must be future dates");
-            }
-            else if (!checkOut.isAfter(checkIn)){
-                System.out.println("Error in reservation: Check-out date must be after check-in date");
+            String erro= reservation.updateDates(checkIn, checkOut);
+            if (erro != null) {
+                System.out.println("Error in reservation: "+erro);
             }
             else {
-                reservation.updateDates(checkIn, checkOut);
                 System.out.println("Reservation: " + reservation);
             }
 
