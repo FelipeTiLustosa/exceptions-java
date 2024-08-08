@@ -1,5 +1,7 @@
 package model.entities;
 
+import model.exceptions.DomainException;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +19,10 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Integer roomNumber, LocalDate checkIn, LocalDate checkOut) {
+    public Reservation(Integer roomNumber, LocalDate checkIn, LocalDate checkOut) throws DomainException {
+        if (!checkOut.isAfter(checkIn)){
+            throw  new DomainException( "Check-out date must be after check-in date");
+        }
         this.roomNumber = roomNumber;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
@@ -42,17 +47,20 @@ public class Reservation {
         return (int) ChronoUnit.DAYS.between(checkIn,checkOut);// esse metado e para data local sem hr, min e seg
     }
      // vai muda
-    public  String updateDates(LocalDate checkIn, LocalDate checkOut){
+    public  void updateDates(LocalDate checkIn, LocalDate checkOut) throws DomainException {
+        /*isBefore: Usa-se para verificar se uma data ou tempo é antes de outra.
+         isAfter: Usa-se para verificar se uma data ou tempo é depois de outra.
+        * */
         LocalDate now = LocalDate.now();
         if (checkIn.isBefore(now) || checkOut.isBefore(now)) {// ser a data de check-in for antes de agora ou a data de check-out for antes de agora q dizer q eu nao posso aceita as datas
-            return "Reservation dates for update must be future dates";
+            throw new DomainException( "Reservation dates for update must be future dates");
+            // o throw new  vai lanca uma execao caso a condicao ocorra
         }
         if (!checkOut.isAfter(checkIn)){
-           return "Check-out date must be after check-in date";
+           throw  new DomainException( "Check-out date must be after check-in date");
         }
         this.checkIn=checkIn;
         this.checkOut=checkOut;
-        return null;
     }
 
     @Override
